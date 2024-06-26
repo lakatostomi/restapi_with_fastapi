@@ -17,14 +17,14 @@ with open("/home/tamas/Documents/population_data_jsonline.json", "r") as user_fi
     logger.info(f"...finished successfully, list size={len(country_list)}")    
 
 def findByCode(code: str):
-    logger.info(f"Serching for countries with {code} code")
+    logger.info(f"Serching for countries with \'{code}\' code")
     result_list = [country for country in country_list if code == country.country_code]
     if result_list:
       return result_list
     raise exception.ResourceNotExist(message=f"No data exists with code={code}")    
 
 def findByYear(year: int):
-    logger.info(f"Serching for countries with {year} code")
+    logger.info(f"Serching for countries with year=\'{year}\'")
     result_list = [country for country in country_list if year == country.year]
     if result_list:
       return result_list

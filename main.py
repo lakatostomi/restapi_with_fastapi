@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Path
-from fastapi.routing import APIRouter
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from typing import Annotated
@@ -7,11 +6,8 @@ import exception
 import countryservice as service
 import Country as model
 import logging
-import uvicorn
 
-app = FastAPI()
-router = APIRouter()
-app.include_router(router, prefix="/api/rest/v1")
+app = FastAPI(root_path="/api/rest/v1")
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 logging.basicConfig(level=logging.DEBUG, filename='app.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s')
