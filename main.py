@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path
+from fastapi import FastAPI, Path, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from typing import Annotated
@@ -8,13 +8,13 @@ import Country as model
 import logging
 
 app = FastAPI(root_path="/api/rest/v1")
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+#app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 logging.basicConfig(level=logging.DEBUG, filename='app.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('uvicorn.error')
 
 @app.exception_handler(exception.ResourceNotExist)
-async def handle_exception(ex: exception.ResourceNotExist):
+async def handle_exception(request: Request, ex: exception.ResourceNotExist):
     return JSONResponse(status_code=404,
                         content={"message": f"{ex.message}", "time": f"{ex.when}", "statusCode": "404", "status": "Not found"})
 
