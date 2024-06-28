@@ -8,7 +8,10 @@ country_list = []
 logging.basicConfig(level=logging.DEBUG, filename='app.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('uvicorn.error')
 
-with open("/home/tamas/Documents/population_data_jsonline.json", "r") as user_file:
+file_loc = "./population_data_jsonline.json"
+# file_loc = "/home/tamas/Documents/population_data_jsonline.json"
+
+with open(file_loc, "r") as user_file:
     logger.info("Reading file...")
     for x in user_file:
         parsed = json.loads(x)
