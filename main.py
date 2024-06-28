@@ -32,3 +32,7 @@ async def findByCode(code: Annotated[str, Path(min_length=3, max_length=4)]):
 async def findByCode(year: Annotated[int, Path(min=1960, max=2010)]): 
     result_list = service.findByYear(year)
     return result_list
+
+@app.get("/")
+async def root():
+    return {"message": "Welcome to the API"}
