@@ -3,13 +3,15 @@ let prevPageLink
 let nextPageLink
 let lastPageLink
 
+const base_url = "http://localhost:8008/api/rest/v1/countries"
+
 function filterByCode() {
     let code = document.querySelector('#code').value;
     if (code.length === 0) {
         alert("The code field can not be empty!");
         submitOK = "false";
     } else {
-        let url = "api/rest/v1/countries/code/" + code;
+        let url = base_url + "/code/" + code;
         createRequest(url, "data")
         document.getElementById("code").value = ""
     }
@@ -21,15 +23,14 @@ function filterByYear() {
         alert("The year field can not be empty!");
         submitOK = "false";
     } else {
-        let url = "api/rest/v1/countries/year/" + year;
+        let url = base_url + "/year/" + year;
         createRequest(url, "data")
         document.getElementById("year").value = ""
     }
 }
 
 function showAll() {
-    let url = "/api/rest/v1/countries";
-    createRequest(url, "data")
+    createRequest(base_url, "data")
 }
 
 function createNavItems(linkHeader) {
@@ -118,10 +119,10 @@ function createRequest(url, targetId) {
 
 
 function createErrorField(errorObject) {
-    let time = errorObject.timestamp;
-    let statusCode = errorObject.status;
-    let status = errorObject.title;
-    let message = errorObject.detail;
+    let time = errorObject.time;
+    let statusCode = errorObject.statusCode;
+    let status = errorObject.status;
+    let message = errorObject.message;
     let text = "<table class='table table-bordered text-center table-danger'>";
     text += "<tr class='table-danger'><td>" + time + "</td>";
     text += "<tr class='table-danger'><td>" + statusCode + "</td>";

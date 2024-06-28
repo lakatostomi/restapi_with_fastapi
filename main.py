@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Path, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
 import exception
 import countryservice as service
@@ -8,7 +9,18 @@ import Country as model
 import logging
 
 app = FastAPI(root_path="/api/rest/v1")
-#app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
+origins = [
+    "http://localhost:8000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 logging.basicConfig(level=logging.DEBUG, filename='app.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('uvicorn.error')
