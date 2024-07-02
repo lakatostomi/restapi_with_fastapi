@@ -26,7 +26,6 @@ def save_all_countries(db: Session, country_list: list[schemas.CountryCreate]):
         db_country_list.append(db_country)
     
     db.add_all(db_country_list)
-    print(len(country_list))
     db.commit()
 
 def create_country(country: schemas.CountryCreate):

@@ -3,7 +3,8 @@ let prevPageLink
 let nextPageLink
 let lastPageLink
 
-const base_url = "http://localhost:8008/api/rest/v1/countries"
+const host = "http://localhost:8008"
+const path = "/api/rest/v1/countries"
 
 function filterByCode() {
     let code = document.querySelector('#code').value;
@@ -11,7 +12,7 @@ function filterByCode() {
         alert("The code field can not be empty!");
         submitOK = "false";
     } else {
-        let url = base_url + "/code/" + code;
+        let url = host + path + "/code/" + code + "?page=1&size=20";
         createRequest(url, "data")
         document.getElementById("code").value = ""
     }
@@ -23,14 +24,14 @@ function filterByYear() {
         alert("The year field can not be empty!");
         submitOK = "false";
     } else {
-        let url = base_url + "/year/" + year;
+        let url = host + path + "/year/" + year + "?page=1&size=40";
         createRequest(url, "data")
         document.getElementById("year").value = ""
     }
 }
 
 function showAll() {
-    createRequest(base_url, "data")
+    createRequest(host + path + "?page=1&size=50", "data")
 }
 
 function createNavItems(linkHeader) {
@@ -40,7 +41,7 @@ function createNavItems(linkHeader) {
             disableButton("first")
         } else {
             enableButton("first")
-            firstPageLink = firstLink
+            firstPageLink = host + firstLink
         }
 
         let prevLink = linkHeader.prev
@@ -48,7 +49,7 @@ function createNavItems(linkHeader) {
             disableButton("prev")
         } else {
             enableButton("prev")
-            prevPageLink = prevLink
+            prevPageLink = host +  prevLink
         }
 
         let nextLink = linkHeader.next
@@ -56,7 +57,7 @@ function createNavItems(linkHeader) {
             disableButton("next")
         } else {
             enableButton("next")
-            nextPageLink = nextLink
+            nextPageLink = host +  nextLink
         }
 
         let lastLink = linkHeader.last
@@ -64,7 +65,7 @@ function createNavItems(linkHeader) {
             disableButton("last")
         } else {
             enableButton("last")
-            lastPageLink = lastLink
+            lastPageLink = host +  lastLink
         }
     } else {
         disableButton("first")
@@ -106,7 +107,7 @@ function createRequest(url, targetId) {
         if (xhr.readyState === 4 && xhr.status === 200) {
             const myObj = JSON.parse(this.responseText);
             let text = createText(myObj)
-            let linkHeader = JSON.parse(xhr.getResponseHeader("Link"));
+            let linkHeader = myObj["links"]
             createNavItems(linkHeader)
             document.getElementById(targetId).innerHTML = text;
         } else if (xhr.readyState === 4 && xhr.status !== 200) {
@@ -139,11 +140,11 @@ function createErrorField(errorObject) {
 function createText(myObj) {
     let text = "<table class='table table-hover table-bordered text-center table-success'>";
     text += "<tr class='table-secondary'><th>" + "Country Name" + "</th><th>" + "Country Code" + "</th><th>" + "Year" + "</th><th>" + "Population" + "</th></tr>";
-    for (let x in myObj) {
-        text += "<tr><td>" + myObj[x].country_name + "</td>"
-            + "<td>" + myObj[x].country_code + "</td>"
-            + "<td>" + myObj[x].year + "</td>"
-            + "<td>" + myObj[x].population + "</td></tr>";
+    for (let x in myObj["items"]) {
+        text += "<tr><td>" + myObj["items"][x].country_name + "</td>"
+            + "<td>" + myObj["items"][x].country_code + "</td>"
+            + "<td>" + myObj["items"][x].year + "</td>"
+            + "<td>" + myObj["items"][x].population + "</td></tr>";
     }
     text += "</table>"
     return text;

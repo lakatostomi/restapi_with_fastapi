@@ -9,10 +9,13 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 import db_module.repository as repository, db_module.models as models ,db_module.schemas as schemas
 from db_module.database import SessionLocal, engine
+from fastapi_pagination import add_pagination, paginate
+from fastapi_pagination.links import Page
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(root_path="/api/rest/v1")
+add_pagination(app)
 
 origins = [
     "http://localhost:8000",
@@ -46,22 +49,22 @@ def inti_data(db: Session = Depends(get_db)):
    rows_inserted = service.init_data(db=db)
    return f"Data is initialized! Number of inserted rows={rows_inserted}"
 
-@app.get("/countries", response_model=list[schemas.Country])
+@app.get("/countries", response_model=Page[schemas.Country])
 def get_all_countries(db: Session = Depends(get_db)):
    logger.info("Returning result list")
-   return repository.get_all_countries(db=db)
+   return paginate(repository.get_all_countries(db=db))
 
-@app.get("/countries/code/{code}", response_model=list[schemas.Country])
+@app.get("/countries/code/{code}", response_model=Page[schemas.Country])
 def findByCode(code: Annotated[str, Path(min_length=3, max_length=4)], db: Session = Depends(get_db)):
-    result_list = repository.get_countries_by_code(db=db, code=code)
-    if result_list:
+    result_list = paginate(repository.get_countries_by_code(db=db, code=code))
+    if result_list.items:
       return result_list
     raise exception.ResourceNotExist(message=f"No data exists with code=\'{code}\'")
 
-@app.get("/countries/year/{year}", response_model=list[schemas.Country])
+@app.get("/countries/year/{year}", response_model=Page[schemas.Country])
 def findByCode(year: Annotated[int, Path(min=1960, max=2010)], db: Session = Depends(get_db)): 
-    result_list = repository.get_countries_by_year(db=db, year=year)
-    if result_list:
+    result_list = paginate(repository.get_countries_by_year(db=db, year=year))
+    if result_list.items:
       return result_list
     raise exception.ResourceNotExist(message=f"No data exists with year=\'{year}\'")
 
