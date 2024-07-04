@@ -34,6 +34,10 @@ function showAll() {
     createRequest(host + path + "?page=1&size=50", "data")
 }
 
+function init() {
+    createRequest(host + path + "/save?page=1&size=50", "data")
+}
+
 function createNavItems(linkHeader) {
     if (linkHeader) {
         let firstLink = linkHeader.first
