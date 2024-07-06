@@ -9,6 +9,13 @@ exceptiongroup==1.2.1
 fastapi==0.111.0
 fastapi-cli==0.0.4
 fastapi-pagination==0.12.26
+google-api-core==2.19.1
+google-auth==2.31.0
+google-cloud-bigquery==3.25.0
+google-cloud-core==2.4.1
+google-crc32c==1.5.0
+google-resumable-media==2.7.1
+googleapis-common-protos==1.63.2
 greenlet==3.0.3
 h11==0.14.0
 httpcore==1.0.5

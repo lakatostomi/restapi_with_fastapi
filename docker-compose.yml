@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  backend_app:
+    image: fastapi_backend_app:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - PROJECT_ID=${PROJECT_ID}
+      - DATASET_ID=${DATASET_ID}
+      - TABLE_ID=${TABLE_ID}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PWD=${POSTGRES_PASSWORD}  
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+
+  postgres_db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${TABLE_ID}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U ${POSTGRES_USER}, -d ${TABLE_ID}"]
+      interval: 10s
+      timeout: 5s
+      retries: 3    
+
+  frontend_app:
+    image: fastapi_frontend_app:latest
+    ports: 
+      - "8000:8000"    
+
+    

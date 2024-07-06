@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path, Request, status, Body, Depends
+from fastapi import FastAPI, Path, Request, status, Body, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
@@ -22,7 +22,7 @@ app = FastAPI(root_path="/api/rest/v1", lifespan=init_data)
 add_pagination(app)
 
 origins = [
-    "http://localhost:8000",
+    "*"
 ]
 
 app.add_middleware(
@@ -33,7 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#logging.basicConfig(level=logging.DEBUG, filename='app.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG, filename='app.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('uvicorn.error')
 
 def get_db():
@@ -72,6 +72,14 @@ def find_by_year(year: Annotated[int, Path()], db: Session = Depends(get_db)):
       return result_list
     raise exception.ResourceNotExist(message=f"No data exists with year=\'{year}\'")
 
-@app.post("/countries", response_model=schemas.Country)
+@app.post("/countries", response_model=Page[schemas.Country])
 def save_country(country: Annotated[schemas.CountryCreate, Body()], db: Session = Depends(get_db)):
    return repository.save_country(db=db, country=country)
+
+@app.put("/countries/update", response_model=[schemas.Country])
+def update_country(update_country: Annotated[schemas.CountryCreate, Body()], db: Session = Depends(get_db)):
+   raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED, details="This method still not allowed!") 
+
+@app.delete("/countries", status_code=status.HTTP_204_NO_CONTENT)
+def delete_country(id: Annotated[int, Path()], db: Session = Depends(get_db)):
+   raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED, details="This method still not allowed!") 

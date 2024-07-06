@@ -3,9 +3,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import sys
 sys.path.append('.')
-from config import POSTGRE_PWD, POSTGRE_USER
+from config import POSTGRES_PWD, POSTGRES_USER, POSTGRES_HOST, TABLE_ID
 
-DATABASE_URL = f"postgresql://{POSTGRE_USER}:{POSTGRE_PWD}@localhost:5432/datas"
+DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PWD}@{POSTGRES_HOST}/{TABLE_ID}"
 
 engine = create_engine(DATABASE_URL)
 

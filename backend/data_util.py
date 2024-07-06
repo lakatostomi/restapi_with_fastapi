@@ -19,15 +19,13 @@ def init_data():
        
 # Initializing data from file
 
-# def init_data(db: Session):
-#   with open("./population_data_jsonline.json", "r") as user_file:
+# def init_data():
+#   with open("../population_data_jsonline.json", "r") as user_file:
 #     logger.info("Initialzing data from file...")
 #     country_list = []
 #     for x in user_file:
 #         parsed = json.loads(x)
 #         country = schemas.CountryCreate(country_name=parsed['country_name'], country_code=parsed['country_code'], year=parsed['year'], population=f"{parsed['population']}")
 #         country_list.append(country)
-#     logger.info(f"...file reading finished, saving data to DB")    
-#     repository.save_all_countries(db=db, country_list=country_list)
-#     logger.info("data saved, app is ready!")  
-#     return len(country_list)
+#     logger.info(f"...file reading finished")
+    

@@ -11,6 +11,7 @@ TABLE_ID = os.environ.get("TABLE_ID")
 
 dataset_str = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}"
 
-POSTGRE_USER = os.environ.get("POSTGRE_USER")
-POSTGRE_PWD = os.environ.get("POSTGRE_PASSWORD")
+POSTGRES_USER = os.environ.get("POSTGRES_USER")
+POSTGRES_PWD = os.environ.get("POSTGRES_PASSWORD")
+POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
 

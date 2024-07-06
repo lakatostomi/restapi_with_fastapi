@@ -2,3 +2,5 @@ __pycache__
 **.log
 .DS_Store
 .venv
+.env
+fastapi_app_sa_key.json
