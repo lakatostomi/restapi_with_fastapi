@@ -1,0 +1,16 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-f', 'back.Dockerfile', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/backend/fastapi_backend_api:latest', '.']
+    id: 'Build backend image'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/backend/fastapi_backend_api:latest']
+    id: 'Push backend image'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-f', 'front.Dockerfile', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/frontend/fastapi_fontend_app:latest', '.']
+    id: 'Build frontend image'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/frontend/fastapi_backend_api:latest']
+    id: 'Push frontend image'

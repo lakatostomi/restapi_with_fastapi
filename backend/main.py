@@ -76,10 +76,10 @@ def find_by_year(year: Annotated[int, Path()], db: Session = Depends(get_db)):
 def save_country(country: Annotated[schemas.CountryCreate, Body()], db: Session = Depends(get_db)):
    return repository.save_country(db=db, country=country)
 
-@app.put("/countries/update", response_model=[schemas.Country])
-def update_country(update_country: Annotated[schemas.CountryCreate, Body()], db: Session = Depends(get_db)):
-   raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED, details="This method still not allowed!") 
+# @app.put("/countries/update", response_model=[schemas.Country])
+# def update_country(update_country: Annotated[schemas.CountryCreate, Body()], db: Session = Depends(get_db)):
+#    raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED, details="This method still not allowed!") 
 
-@app.delete("/countries", status_code=status.HTTP_204_NO_CONTENT)
-def delete_country(id: Annotated[int, Path()], db: Session = Depends(get_db)):
-   raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED, details="This method still not allowed!") 
+# @app.delete("/countries", status_code=status.HTTP_204_NO_CONTENT)
+# def delete_country(id: Annotated[int, Path()], db: Session = Depends(get_db)):
+#    raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED, details="This method still not allowed!") 
