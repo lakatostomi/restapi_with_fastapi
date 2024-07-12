@@ -1,15 +1,16 @@
 from google.cloud import bigquery
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 import logging
 import sys
 import os
 sys.path.append('.')
-from config import dataset_str
+from config import settings
 
 client = bigquery.Client()
 logger = logging.getLogger('uvicorn.error')
- 
+
 def get_all_countries():
+    dataset_str = f"{settings.PROJECT_ID}.{settings.DATASET_ID}.{settings.TABLE_ID}"
     query = f"SELECT * FROM {dataset_str};"
     logger.info("Start querying data form Biq Query!")
     try:
