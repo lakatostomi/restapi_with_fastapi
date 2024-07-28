@@ -4,3 +4,4 @@ __pycache__
 .venv
 .env
 fastapi_app_sa_key.json
+firebase-config.json

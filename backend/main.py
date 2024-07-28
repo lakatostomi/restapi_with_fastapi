@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Path, Request, status, Body, Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
@@ -11,6 +12,8 @@ from fastapi_pagination import add_pagination, paginate
 from fastapi_pagination.links import Page
 import exception
 from db_module import repository
+from firebase_admin import auth
+import auth_router
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -19,6 +22,7 @@ async def init_data(app: FastAPI):
    yield
 
 app = FastAPI(root_path="/api/rest/v1", lifespan=init_data)
+app.include_router(auth_router.router)
 add_pagination(app)
 
 origins = [
@@ -72,14 +76,22 @@ def find_by_year(year: Annotated[int, Path()], db: Session = Depends(get_db)):
       return result_list
     raise exception.ResourceNotExist(message=f"No data exists with year=\'{year}\'")
 
-@app.post("/countries", response_model=Page[schemas.Country])
+
+def verify_token(cred: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False))):
+   try:
+      print(cred.credentials)
+      decodod_token = auth.verify_id_token(cred.credentials)
+   except Exception as ex:
+      raise HTTPException(status_code=401, detail=f"Authentication error: {ex}", headers={"WWW-Authenticate": "Bearer"}) 
+
+@app.post("/countries", response_model=schemas.Country, status_code=status.HTTP_201_CREATED, dependencies=[Depends(verify_token)])
 def save_country(country: Annotated[schemas.CountryCreate, Body()], db: Session = Depends(get_db)):
    return repository.save_country(db=db, country=country)
 
-# @app.put("/countries/update", response_model=[schemas.Country])
-# def update_country(update_country: Annotated[schemas.CountryCreate, Body()], db: Session = Depends(get_db)):
-#    raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED, details="This method still not allowed!") 
+@app.patch("/countries/update/{id}", response_model=schemas.Country, dependencies=[Depends(verify_token)])
+def update_country(id: Annotated[int, Path()], update_country: Annotated[schemas.CountryCreate, Body()], db: Session = Depends(get_db)):
+   return repository.update_country(db=db, country=update_country, id=id)
 
-# @app.delete("/countries", status_code=status.HTTP_204_NO_CONTENT)
-# def delete_country(id: Annotated[int, Path()], db: Session = Depends(get_db)):
-#    raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED, details="This method still not allowed!") 
+@app.delete("/countries/delete/{id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(verify_token)])
+def delete_country(id: Annotated[int, Path()], db: Session = Depends(get_db)):
+   return repository.delete_country(db=db, id=id)

@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from . import models 
 from . import schemas
 import logging
+from fastapi import HTTPException
 
 logger = logging.getLogger('uvicorn.error')
 
@@ -23,7 +24,6 @@ def save_country(db: Session, country: schemas.CountryCreate):
     db.add(db_country)
     db.commit()
     db.refresh(db_country)
-    db.close()
     return db_country
 
 def save_all_countries(db: Session, country_list: list[schemas.CountryCreate]):
@@ -44,7 +44,22 @@ def create_country(country: schemas.CountryCreate):
     return models.Country(**country.model_dump())
 
 def delete_country(db: Session, id: int):
-    pass #later will be declared
+    country = db.get(models.Country, id)
+    if not country:
+        raise HTTPException(status_code=404, detail=f"No country exist with id={id}!")
+    db.delete(country)
+    db.commit()
 
-def update_country(db: Session, country: schemas.CountryCreate):
-    pass #later will be declared
+def update_country(db: Session, country: schemas.CountryCreate, id: int):
+    country_in_db = db.get(models.Country, id)
+    if not country_in_db:
+        raise HTTPException(status_code=404, detail=f"No country exist with id={id}!")
+    stored_country_model = schemas.Country(id=country_in_db.id,country_name=country_in_db.country_name, country_code=country_in_db.country_code, year=country_in_db.year, population=country_in_db.population)
+    update_data = country.model_dump(exclude_unset=True)
+    update_country = stored_country_model.model_copy(update=update_data)
+    db_county = create_country(update_country)
+    db.merge(db_county)
+    db.commit()
+    db.refresh
+    return db_county
+

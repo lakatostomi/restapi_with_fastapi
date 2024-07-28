@@ -1,10 +1,10 @@
 from pydantic import BaseModel
 
 class CountryBase(BaseModel):
-    country_name: str 
-    country_code: str
-    year: int
-    population: str
+    country_name: str | None = None
+    country_code: str | None = None
+    year: int | None = None
+    population: str | None = None
 
 class CountryCreate(CountryBase):
     pass

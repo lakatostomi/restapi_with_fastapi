@@ -3,7 +3,7 @@ let prevPageLink
 let nextPageLink
 let lastPageLink
 
-const host = "http://127.0.0.1:8080"
+const host = "http://10.68.0.6:8080"
 const path = "/api/rest/v1/countries"
 
 function filterByCode() {
