@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Path, Request, status, Body, Depends, HTTPException
+from fastapi import FastAPI, Path, Request, status, Body, Depends, HTTPException, Security
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security.api_key import APIKeyHeader
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
@@ -17,8 +18,12 @@ import auth_router
 
 models.Base.metadata.create_all(bind=engine)
 
+#keys = ("api_key_1", "api_key_2", "api_key_3")
+
 async def init_data(app: FastAPI):
    util.init_data()
+   # for k in keys:
+   #    auth_router.create_key(k)
    yield
 
 app = FastAPI(root_path="/api/rest/v1", lifespan=init_data)
@@ -76,22 +81,26 @@ def find_by_year(year: Annotated[int, Path()], db: Session = Depends(get_db)):
       return result_list
     raise exception.ResourceNotExist(message=f"No data exists with year=\'{year}\'")
 
+api_key_header = APIKeyHeader(name="x-api-key", auto_error=False)
 
-def verify_token(cred: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False))):
+async def verify_token(cred: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False))):
    try:
-      print(cred.credentials)
       decodod_token = auth.verify_id_token(cred.credentials)
    except Exception as ex:
-      raise HTTPException(status_code=401, detail=f"Authentication error: {ex}", headers={"WWW-Authenticate": "Bearer"}) 
+      raise HTTPException(status_code=401, detail=f"Authentication error (token): {ex}", headers={"WWW-Authenticate": "Bearer + APIKey"}) 
 
-@app.post("/countries", response_model=schemas.Country, status_code=status.HTTP_201_CREATED, dependencies=[Depends(verify_token)])
+async def api_key_auth(api_key: str = Security(api_key_header)):
+   if auth_router.check_api_key_exist(api_key=api_key) is False:
+      raise HTTPException(status_code=401, detail=f"Authentication error: APIKey missing", headers={"WWW-Authenticate": "Bearer + APIKey"})  
+
+@app.post("/countries", response_model=schemas.Country, status_code=status.HTTP_201_CREATED, dependencies=[Depends(verify_token), Depends(api_key_auth)])
 def save_country(country: Annotated[schemas.CountryCreate, Body()], db: Session = Depends(get_db)):
    return repository.save_country(db=db, country=country)
 
-@app.patch("/countries/update/{id}", response_model=schemas.Country, dependencies=[Depends(verify_token)])
+@app.patch("/countries/update/{id}", response_model=schemas.Country, dependencies=[Depends(verify_token), Depends(api_key_auth)])
 def update_country(id: Annotated[int, Path()], update_country: Annotated[schemas.CountryCreate, Body()], db: Session = Depends(get_db)):
    return repository.update_country(db=db, country=update_country, id=id)
 
-@app.delete("/countries/delete/{id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(verify_token)])
+@app.delete("/countries/delete/{id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(verify_token), Depends(api_key_auth)])
 def delete_country(id: Annotated[int, Path()], db: Session = Depends(get_db)):
    return repository.delete_country(db=db, id=id)
