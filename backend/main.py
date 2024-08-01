@@ -18,12 +18,8 @@ import auth_router
 
 models.Base.metadata.create_all(bind=engine)
 
-#keys = ("api_key_1", "api_key_2", "api_key_3")
-
 async def init_data(app: FastAPI):
    util.init_data()
-   # for k in keys:
-   #    auth_router.create_key(k)
    yield
 
 app = FastAPI(root_path="/api/rest/v1", lifespan=init_data)

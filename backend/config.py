@@ -91,8 +91,8 @@ class Settings(BaseSettings):
     POSTGRES_USER: str 
     POSTGRES_PASSWORD: str
     INSTANCE_UNIX_SOCKET: str | None = None
-    FIREBASE_CONFIG: str | None = None
-    FIREBASE_AUTH_SA_KEY: str | None = None
+    FIREBASE_CONFIG: str 
+    FIREBASE_AUTH_SA_KEY: str 
 
     model_config = SettingsConfigDict(
         case_sensitive=False, env_file=".env", env_file_encoding="utf-8"

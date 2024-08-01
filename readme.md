@@ -5,7 +5,7 @@ python -m venv .venv
 
 source .venv/bin/activate
 
-pip install -r req.txt
+pip install -r requirements.txt
 
 uvicorn main:app --port 8008 --reload
 
@@ -38,6 +38,9 @@ visit http://localhost:8000/display.html
 - POSTGRES_HOST=localhost:5432
 - POSTGRES_USER="user"
 - POSTGRES_PASSWORD="mypassword"
+- INSTANCE_UNIX_SOCKET="/cloudsql/project:region:instance"          ##necessary in the case of Cloud SQL
+- FIREBASE_CONFIG="config.json"                                     ##necessary to use Google Firebase and Firestore
+- FIREBASE_AUTH_SA_KEY="./app_key.json"                             ##necessary to use Google Firebase and Firestore
 
 3. Create an image for the API: 
 docker build -f back.Dockerfile -t fastapi_backend_app .
@@ -62,3 +65,10 @@ pytest test_fastapi.py
 - http://127.0.0.1:8000/api/rest/v1/countries/year/2010?page=1size=40
 - http://127.0.0.1:8000/api/rest/v1/countries/code/HUN?page=1size=40
 
+- http://127.0.0.1:8000/api/rest/v1/signup
+- http://127.0.0.1:8000/api/rest/v1/login
+- http://127.0.0.1:8000/api/rest/v1/countries (POST) 
+- http://127.0.0.1:8000/api/rest/v1/countries/update/1 (PATCH)
+- http://127.0.0.1:8000/api/rest/v1/countries/delete/1 (DELETE)
+
+POST, PATCH and DELETE endpoints are secured with Google Firebase Authentication and API Key Authentication using Google Firestore 
