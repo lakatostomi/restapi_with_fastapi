@@ -222,9 +222,3 @@ The project includes a `cloudbuild.yaml` for automated builds and deployment via
 - **Google BigQuery** as the primary data source
 - **Google Firebase** for authentication and Firestore-based API key management
 - **GCP Secret Manager** for managing environment variables securely
-
----
-
-## License
-
-This project is open source — feel free to explore, fork, and build on it.
