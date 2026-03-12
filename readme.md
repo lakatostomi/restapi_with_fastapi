@@ -222,3 +222,12 @@ The project includes a `cloudbuild.yaml` for automated builds and deployment via
 - **Google BigQuery** as the primary data source
 - **Google Firebase** for authentication and Firestore-based API key management
 - **GCP Secret Manager** for managing environment variables securely
+
+---
+
+## 🔗 Related Project
+
+| Project | Description |
+|---|---|
+| [python_web_app_gcp](https://gitlab.com/terraform_projects2/python_web_app_gcp) | Terraform & GitLab CI for a 3-tier GCP infrastructure using Serverless services |
+
